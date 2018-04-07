@@ -21,14 +21,24 @@ namespace Game
             mAgent.nextPosition = new Vector3(mPosition.x, 0.0f, mPosition.y);
         }
 
+        public void setPosition(Vector3 pos)
+        {
+            mPosition = pos;
+            mAgent.nextPosition = pos;
+        }
+
         public bool isFollowingPath()
         {
+            if (!gameObject.activeInHierarchy)
+                return false;
+
             if (!mAgent.pathPending) {
                 if (mAgent.remainingDistance <= mAgent.stoppingDistance) {
                     if (!mAgent.hasPath || mAgent.velocity.sqrMagnitude < 0.0001f)
                         return false;
                 }
             }
+
             return true;
         }
 

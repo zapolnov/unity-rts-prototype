@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 namespace Game
 {
@@ -9,14 +10,22 @@ namespace Game
     {
         public static GameManager instance;
         public Tilemap tilemap;
+        public GameObject peasantPrefab;
         public GameObject selectionRectanglePrefab;
         public GameObject clickTargetPrefab;
+        public Text goldText;
+        public GameObject townHallMenu;
+        public Text townHallStatusText;
+        public int initialGoldCount = 1000;
         private SelectableByPlayer mCurrentSelected;
         private int mGoldCount = 0;
 
         void Awake()
         {
             instance = this;
+            mGoldCount = initialGoldCount;
+            goldText.text = string.Format("Gold: {0}", mGoldCount);
+            setCurrentSelected(null, true);
         }
 
         void OnDestroy()
@@ -25,14 +34,19 @@ namespace Game
                 instance = null;
         }
 
-        public void setCurrentSelected(SelectableByPlayer selected)
+        public void setCurrentSelected(SelectableByPlayer selected, bool force = false)
         {
-            if (mCurrentSelected != selected) {
+            if (mCurrentSelected != selected || force) {
+                townHallMenu.SetActive(false);
                 if (mCurrentSelected != null)
                     mCurrentSelected.onDeselect();
+
                 mCurrentSelected = selected;
-                if (mCurrentSelected != null)
+
+                if (mCurrentSelected != null) {
                     mCurrentSelected.onSelect();
+                    townHallMenu.SetActive(mCurrentSelected.GetComponent<TownHall>());
+                }
             }
         }
 
@@ -76,10 +90,40 @@ namespace Game
         public void addGold(int count)
         {
             mGoldCount += count;
+            goldText.text = string.Format("Gold: {0}", mGoldCount);
+        }
+
+        public bool removeGold(int count)
+        {
+            if (mGoldCount < count)
+                return false;
+            mGoldCount -= count;
+            goldText.text = string.Format("Gold: {0}", mGoldCount);
+            return true;
+        }
+
+        public void onTownHall_BuildPeasant()
+        {
+            if (!mCurrentSelected)
+                return;
+
+            var targetTownHall = mCurrentSelected.GetComponent<TownHall>();
+            if (!targetTownHall)
+                return;
+
+            // FIXME: this value should be configured elsewhere
+            if (removeGold(40))
+                targetTownHall.buildPeasant();
         }
 
         void Update()
         {
+            if (mCurrentSelected != null) {
+                var townHall = mCurrentSelected.GetComponent<TownHall>();
+                if (townHall)
+                    townHallStatusText.text = townHall.statusText();
+            }
+
             if (Input.GetMouseButtonDown(1) && mCurrentSelected != null && mCurrentSelected.isActiveAndEnabled) {
                 NavMeshAgent agent = mCurrentSelected.GetComponent<NavMeshAgent>();
                 if (agent != null) {

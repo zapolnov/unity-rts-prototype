@@ -44,11 +44,11 @@ TagManager:
   - name: Ground
     uniqueID: 1734627063
     locked: 0
-  - name: Units
-    uniqueID: 540363161
-    locked: 0
   - name: Buildings
     uniqueID: 826922663
+    locked: 0
+  - name: Units
+    uniqueID: 540363161
     locked: 0
   - name: Indicators
     uniqueID: 385731781
