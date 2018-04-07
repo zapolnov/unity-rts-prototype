@@ -4507,6 +4507,7 @@ GameObject:
   - component: {fileID: 643678509}
   - component: {fileID: 643678510}
   - component: {fileID: 643678511}
+  - component: {fileID: 643678512}
   m_Layer: 0
   m_Name: Peasant
   m_TagString: Untagged
@@ -4624,7 +4625,7 @@ NavMeshAgent:
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 0
+  m_StoppingDistance: 0.2
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -4643,6 +4644,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7cfc36ba88ab5f42a46260193e20d2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rotation: 0
 --- !u!50 &643678511
 Rigidbody2D:
   serializedVersion: 4
@@ -4663,6 +4665,23 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!95 &643678512
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 643678503}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 49866bbc513f037459c41fcf36dbda74, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!1 &852427395
 GameObject:
   m_ObjectHideFlags: 0
