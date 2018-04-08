@@ -4,34 +4,34 @@ using UnityEngine.AI;
 
 namespace Game
 {
-    public class TownHall : MonoBehaviour
+    public class Barracks : MonoBehaviour
     {
-        public float peasantBuildTime = 5.0f;
+        public float warriorBuildTime = 7.0f;
         public Sprite normalSprite;
         public Sprite constructingSprite;
         public GameObject spawnPoint;
         private SpriteRenderer mSpriteRenderer;
-        private int mPeasantsQueued = 0;
+        private int mWarriorsQueued = 0;
         private float mTimeLeft = 0.0f;
 
-        private void Awake()
+        void Awake()
         {
             mSpriteRenderer = GetComponent<SpriteRenderer>();
         }
 
-        public void buildPeasant()
+        public void buildWarrior()
         {
-            if (mPeasantsQueued++ == 0)
-                mTimeLeft = peasantBuildTime;
+            if (mWarriorsQueued++ == 0)
+                mTimeLeft = warriorBuildTime;
         }
 
         public string statusText()
         {
-            if (mPeasantsQueued == 0)
+            if (mWarriorsQueued == 0)
                 return "";
             else {
-                return string.Format("Building peasant: {0}%, {1} queued",
-                    100 - (int)(mTimeLeft * 100.0f / peasantBuildTime), mPeasantsQueued - 1);
+                return string.Format("Building warrior: {0}%, {1} queued",
+                    100 - (int)(mTimeLeft * 100.0f / warriorBuildTime), mWarriorsQueued - 1);
             }
         }
 
@@ -43,20 +43,20 @@ namespace Game
             else
                 mSpriteRenderer.sprite = normalSprite;
 
-            if (mPeasantsQueued > 0) {
+            if (mWarriorsQueued > 0) {
                 mTimeLeft -= Time.deltaTime;
                 if (mTimeLeft <= 0) {
                     Vector3 dest = spawnPoint.transform.position;
                     Vector3 dir = (dest - transform.position).normalized;
 
                     // FIXME: use object pool
-                    var peasant = Instantiate(GameManager.instance.peasantPrefab);
-                    peasant.GetComponent<NavMeshPositionSetter>().setPosition(dest - dir * 0.6f);
-                    GameManager.instance.navigateAgentToPos(peasant.GetComponent<NavMeshAgent>(),
+                    var warrior = Instantiate(GameManager.instance.warriorPrefab);
+                    warrior.GetComponent<NavMeshPositionSetter>().setPosition(dest - dir * 0.6f);
+                    GameManager.instance.navigateAgentToPos(warrior.GetComponent<NavMeshAgent>(),
                         new Vector2(dest.x, dest.z));
 
-                    if (--mPeasantsQueued > 0)
-                        mTimeLeft = peasantBuildTime;
+                    if (--mWarriorsQueued > 0)
+                        mTimeLeft = warriorBuildTime;
                 }
             }
         }

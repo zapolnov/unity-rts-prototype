@@ -25,6 +25,9 @@ namespace Game
 
         void OnMouseDown()
         {
+            if (!enabled)
+                return;
+
             GameManager.instance.setCurrentSelected(this);
         }
     }

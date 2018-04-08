@@ -37,6 +37,14 @@ namespace Game
             return guysInside.ContainsKey(guy);
         }
 
+        public string statusText()
+        {
+            if (guysInside.Count == 0)
+                return string.Format("Gold left: {0}", goldLeft);
+            else
+                return string.Format("Gold left: {0}, {1} peasant(s) inside", goldLeft, guysInside.Count);
+        }
+
         void Update()
         {
             // FIXME: filling a set each update creates a pressure on the GC, but who cares in the prototype :)

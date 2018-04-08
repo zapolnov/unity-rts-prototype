@@ -13,6 +13,8 @@ namespace Game
             CollectingGold_GoingToMine,
             CollectingGold_InsideMine,
             CollectingGold_GoingToTownHall,
+            GoingToConstruction,
+            Constructing,
         }
 
         private Mode mMode = Mode.Default;
@@ -20,6 +22,7 @@ namespace Game
         private NavMeshPositionSetter mNavMeshPosition;
         private Animator mAnimator;
         public GoldMine goldMine;
+        public Construction targetConstruction;
         public int goldCarryCapacity = 10;
         public int carriesGold = 0;
 
@@ -37,7 +40,8 @@ namespace Game
 
             switch (mode) {
                 case Mode.Default:
-                    if (mMode != Mode.CollectingGold_InsideMine) {
+                case Mode.GoingToConstruction:
+                    if (mMode != Mode.CollectingGold_InsideMine && mMode != Mode.Constructing) {
                         mMode = mode;
                         return true;
                     }
@@ -46,6 +50,23 @@ namespace Game
                 case Mode.CollectingGold_GoingToMine:
                     mMode = mode;
                     return true;
+            }
+
+            return false;
+        }
+
+        public bool canBuild()
+        {
+            switch (mMode) {
+                case Mode.Default:
+                case Mode.CollectingGold_GoingToMine:
+                case Mode.CollectingGold_GoingToTownHall:
+                case Mode.GoingToConstruction:
+                    return true;
+
+                case Mode.CollectingGold_InsideMine:
+                case Mode.Constructing:
+                    break;
             }
 
             return false;
@@ -68,6 +89,22 @@ namespace Game
                             } else
                                 mMode = Mode.CollectingGold_GoingToTownHall;
                         }
+                    }
+                    break;
+
+                case Mode.GoingToConstruction:
+                    if (!targetConstruction || targetConstruction.builder != null || !targetConstruction.enabled)
+                        mMode = Mode.Default;
+                    else if (!mNavMeshPosition.isFollowingPath()) {
+                        Vector3 pos = targetConstruction.transform.position;
+                        GameManager.instance.navigateAgentToPos(mNavMeshAgent, new Vector2(pos.x, pos.y));
+                    }
+                    break;
+
+                case Mode.Constructing:
+                    if (targetConstruction == null || targetConstruction.builder == null) {
+                        gameObject.SetActive(true);
+                        mMode = Mode.Default;
                     }
                     break;
             }
@@ -106,6 +143,19 @@ namespace Game
                             mMode = Mode.CollectingGold_InsideMine;
                             collidingGoldMine.addGuy(gameObject);
                             goldMine = collidingGoldMine;
+                        }
+                    }
+                    break;
+
+                case Mode.GoingToConstruction:
+                    var collidingConstruction = collision.gameObject.GetComponent<Construction>();
+                    if (collidingConstruction && collidingConstruction.enabled && collidingConstruction == targetConstruction) {
+                        if (collidingConstruction.builder != null)
+                            mMode = Mode.Default;
+                        else {
+                            mMode = Mode.Constructing;
+                            collidingConstruction.builder = this;
+                            gameObject.SetActive(false);
                         }
                     }
                     break;
