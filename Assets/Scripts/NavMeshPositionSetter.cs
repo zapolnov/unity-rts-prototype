@@ -23,8 +23,9 @@ namespace Game
 
         public void setPosition(Vector3 pos)
         {
+            transform.localPosition = pos;
             mPosition = pos;
-            mAgent.nextPosition = pos;
+            mAgent.nextPosition = new Vector3(pos.x, 0.0f, pos.y);
         }
 
         public bool isFollowingPath()
